@@ -5,23 +5,28 @@ FROM docker.io/ubuntu:${UBUNTU_VERSION}
 
 SHELL [ "/bin/bash", "-o", "pipefail", "-eE", "-u", "-c" ]
 
+ENV USER=ubuntu
+
 # Firstly, we make sure we have all base package that
 # we need as well as all updates.
-# hadolint disable=DL3005
 RUN <<EOM
   export DEBIAN_FRONTEND=noninteractive
   export DEBCONF_NONINTERACTIVE_SEEN=true
 
   apt-get --yes update
   apt-get --yes upgrade
-  apt-get --yes install --no-install-recommends \
-    ca-certificates curl doas git wget
+  apt-get --yes install --no-install-recommends apt-utils ca-certificates curl doas wget
+
+  export SCRIPT='hermes'
+  export USER="${USER}"
+  export HOME="/home/${USER}"
+  wget --quiet -O /tmp/setup.sh https://raw.githubusercontent.com/georglauterbach/hermes/main/setup.sh
+  bash /tmp/setup.sh
+
   apt-get --yes autoremove
   apt-get --yes clean
-  rm -rf /var/lib/apt/lists/*
+  rm -rf /var/lib/apt/lists/* /tmp/*
 EOM
-
-ENV USER=ubuntu
 
 RUN <<EOM
   echo "permit nopass ${USER}" >/etc/doas.conf
@@ -32,15 +37,7 @@ RUN <<EOM
 EOM
 
 USER ${USER}
-
-RUN <<EOM
-  wget --progress=dot:giga -O /tmp/setup.sh https://raw.githubusercontent.com/georglauterbach/hermes/main/setup.sh
-  bash /tmp/setup.sh
-
-  doas apt-get --yes autoremove
-  doas apt-get --yes clean
-  doas rm -rf /var/lib/apt/lists/*
-EOM
+WORKDIR /home/${USER}
 
 # Add metadata to image:
 LABEL org.opencontainers.image.title="Custom Development Container Base Image"
