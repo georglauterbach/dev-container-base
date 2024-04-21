@@ -1,6 +1,7 @@
+---
 name: Build the Development Container Image and Push It
 
-on:
+on: # yamllint disable-line rule:truthy
   push:
     branches: [ main ]
 

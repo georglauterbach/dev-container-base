@@ -1,7 +1,15 @@
 ---
 yaml-files:
-  - '*.yml'
   - '*.yaml'
+  - '*.yml'
+
+ignore: |
+  **/.output.yaml
+  **/.old.output.yaml
+  **/.gitlab-ci.yml
+  **/cloud-init.yml
+  **/charts/
+  **/libbash/
 
 rules:
   braces:
@@ -11,8 +19,8 @@ rules:
     max-spaces-inside-empty: 0
   brackets:
     forbid: false
-    min-spaces-inside: 0
-    max-spaces-inside: 0
+    min-spaces-inside: 1
+    max-spaces-inside: 1
     min-spaces-inside-empty: 0
     max-spaces-inside-empty: 0
   colons:
@@ -24,7 +32,7 @@ rules:
     max-spaces-after: 1
   comments:
     level: warning
-    require-starting-space: true
+    require-starting-space: false
     ignore-shebangs: true
     min-spaces-from-content: 1
   comments-indentation: disable
@@ -37,7 +45,7 @@ rules:
     max-start: 1
     max-end: 1
   empty-values:
-    forbid-in-block-mappings: false
+    forbid-in-block-mappings: true
     forbid-in-flow-mappings: false
   hyphens:
     max-spaces-after: 1
@@ -48,7 +56,7 @@ rules:
   key-duplicates: enable
   key-ordering: disable
   line-length:
-    max: 10000
+    max: 250
     allow-non-breakable-inline-mappings: true
   new-line-at-end-of-file: enable
   new-lines:
