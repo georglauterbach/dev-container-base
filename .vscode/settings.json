@@ -1,0 +1,7 @@
+{
+  "hadolint.cliOptions": [
+    "--no-color",
+    "--config",
+    "./.github/linters/.hadolint.yml"
+  ]
+}

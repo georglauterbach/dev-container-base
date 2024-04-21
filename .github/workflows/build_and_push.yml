@@ -1,0 +1,55 @@
+name: Build the Development Container Image and Push It
+
+on:
+  push:
+    branches: [ main ]
+
+permissions:
+  contents: read
+  packages: write
+
+jobs:
+  build-and-push:
+    name: Build and Push
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3.0.0
+        with:
+          platforms: arm64
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3.3.0
+
+      - name: Prepare tags
+        id: prep
+        uses: docker/metadata-action@v5.5.1
+        with:
+          images: ghcr.io/georglauterbach/dev-container-base
+          tags: |
+            type=edge,branch=master
+            type=semver,pattern={{major}}
+            type=semver,pattern={{major}}.{{minor}}
+            type=semver,pattern={{major}}.{{minor}}.{{patch}}
+
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build and push image
+        uses: docker/build-push-action@v5.3.0
+        with:
+          context: .
+          # Build at least the AMD64 image (which runs against the test suite).
+          platforms: linux/amd64,linux/arm64
+          build-args: |
+            VCS_RELEASE=${{ github.ref_type == 'tag' && github.ref_name || 'edge' }}
+            VCS_REVISION=${{ github.sha }}
+          push: true
+          provenance: true
