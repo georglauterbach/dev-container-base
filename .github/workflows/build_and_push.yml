@@ -2,6 +2,7 @@
 name: Build the Development Container Image and Push It
 
 on: # yamllint disable-line rule:truthy
+  workflow_dispatch:
   schedule:
     - cron: 0 4 * * 0
   push:
