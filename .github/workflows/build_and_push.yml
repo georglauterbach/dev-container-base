@@ -6,6 +6,7 @@ on: # yamllint disable-line rule:truthy
     - cron: 0 4 * * 0
   push:
     branches: [ main ]
+    tags: [ '*.*.*' ]
 
 permissions:
   contents: read
