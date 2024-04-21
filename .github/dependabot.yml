@@ -2,10 +2,10 @@
 version: 2
 
 updates:
- - package-ecosystem: devcontainers
-   directory: /
-   schedule:
-     interval: monthly
+  - package-ecosystem: devcontainers
+    directory: /
+    schedule:
+      interval: monthly
 
   - package-ecosystem: github-actions
     directory: /
@@ -13,6 +13,6 @@ updates:
     rebase-strategy: auto
     schedule:
       interval: monthly
-    reviewers: [ georglauterbach ]
-    assignees: [ georglauterbach ]
-    labels: [ area/ci, kind/update ]
+    reviewers: [georglauterbach]
+    assignees: [georglauterbach]
+    labels: [area/ci, kind/update]

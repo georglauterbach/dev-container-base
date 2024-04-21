@@ -25,7 +25,7 @@ jobs:
         uses: docker/setup-buildx-action@v3.3.0
 
       - name: Prepare tags
-        id: prep
+        id: prep-tags
         uses: docker/metadata-action@v5.5.1
         with:
           images: ghcr.io/georglauterbach/dev-container-base
@@ -53,3 +53,4 @@ jobs:
             VCS_REVISION=${{ github.sha }}
           push: true
           provenance: true
+          tags: ${{ steps.prep-tags.outputs.tags }}
