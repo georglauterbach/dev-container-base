@@ -13,7 +13,7 @@ RUN <<EOM
   export DEBCONF_NONINTERACTIVE_SEEN=true
 
   apt-get --yes update
-  apt-get --yes dist-upgrade
+  apt-get --yes upgrade
   apt-get --yes install --no-install-recommends \
     ca-certificates curl doas git wget
   apt-get --yes autoremove

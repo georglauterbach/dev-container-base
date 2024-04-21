@@ -31,7 +31,7 @@ jobs:
         with:
           images: ghcr.io/georglauterbach/dev-container-base
           tags: |
-            type=edge,branch=master
+            type=edge,branch=main
             type=semver,pattern={{major}}
             type=semver,pattern={{major}}.{{minor}}
             type=semver,pattern={{major}}.{{minor}}.{{patch}}
