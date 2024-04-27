@@ -31,8 +31,8 @@ EOM
 
 RUN <<EOM
   echo "permit nopass ${USER}" >/etc/doas.conf
-  chown -c root:root /etc/doas.conf
-  chmod -c 0400 /etc/doas.conf
+  chown root:root /etc/doas.conf
+  chmod 0400 /etc/doas.conf
   doas -C /etc/doas.conf
   ln -s "$(command -v doas)" /usr/local/bin/sudo
 EOM
