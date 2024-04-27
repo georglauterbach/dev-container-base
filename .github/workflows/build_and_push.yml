@@ -1,5 +1,5 @@
 ---
-name: Build the Development Container Image and Push It
+name: Integration
 
 on: # yamllint disable-line rule:truthy
   workflow_dispatch:
@@ -15,7 +15,7 @@ permissions:
 
 jobs:
   build-and-push:
-    name: Build and Push
+    name: Build & Push Container Image
     runs-on: ubuntu-22.04
     steps:
       - name: Checkout
