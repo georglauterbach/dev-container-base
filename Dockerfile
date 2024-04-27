@@ -15,13 +15,14 @@ RUN <<EOM
 
   apt-get --yes update
   apt-get --yes upgrade
-  apt-get --yes install --no-install-recommends apt-utils ca-certificates curl doas wget
+  apt-get --yes install --no-install-recommends apt-utils ca-certificates curl doas
 
-  export SCRIPT='hermes'
   export USER="${USER}"
   export HOME="/home/${USER}"
-  wget --quiet -O /tmp/setup.sh https://raw.githubusercontent.com/georglauterbach/hermes/main/setup.sh
-  bash /tmp/setup.sh
+  export LOG_LEVEL='trace'
+  curl --silent --show-error --fail --location --output '/tmp/setup.sh' \
+    'https://raw.githubusercontent.com/georglauterbach/hermes/main/setup.sh'
+  bash /tmp/setup.sh --assume-correct-incovation --assume-data-is-correct
 
   apt-get --yes autoremove
   apt-get --yes clean
