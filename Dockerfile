@@ -1,6 +1,6 @@
 # We use Ubuntu as a base because it comes with
 # frequent updates and a wide variety of packages.
-ARG UBUNTU_VERSION=23.10
+ARG UBUNTU_VERSION=24.04
 FROM docker.io/ubuntu:${UBUNTU_VERSION}
 
 SHELL [ "/bin/bash", "-o", "pipefail", "-eE", "-u", "-c" ]
