@@ -9,6 +9,8 @@ ENV USER=ubuntu
 
 # Firstly, we make sure we have all base package that
 # we need as well as all updates.
+#
+# hadolint ignore=DL3005,DL3008
 RUN <<EOM
   export DEBIAN_FRONTEND=noninteractive
   export DEBCONF_NONINTERACTIVE_SEEN=true
@@ -18,9 +20,7 @@ RUN <<EOM
   # because we do not have prior commands installing software
   # that could potentially be damaged.
   apt-get --yes update
-  # hadolint ignore=DL3005
   apt-get --yes dist-upgrade
-  # hadolint ignore=DL3008
   apt-get --yes install --no-install-recommends apt-utils ca-certificates curl doas
 
   # We run Hermes (https://github.com/georglauterbach/hermes) here to easily
