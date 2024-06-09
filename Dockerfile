@@ -48,7 +48,7 @@ WORKDIR /home/${USER}
 
 # Finally, we add metadata to the image.
 LABEL org.opencontainers.image.title="Custom Development Container Base Image"
-LABEL org.opencontainers.image.vendor="Georg Lauterbach (@georglauterbach)"
+LABEL org.opencontainers.image.vendor="Georg Lauterbach (@georglauterbach) on GitHub"
 LABEL org.opencontainers.image.authors="Georg Lauterbach (@georglauterbach)"
 LABEL org.opencontainers.image.licenses="MIT"
 LABEL org.opencontainers.image.description="A custom Development Container base image packed with as much as necessary and as few as possible configurations and applications to make development a breeze."
@@ -56,11 +56,11 @@ LABEL org.opencontainers.image.url="https://github.com/georglauterbach/dev-conta
 LABEL org.opencontainers.image.documentation="https://github.com/georglauterbach/dev-container-base/blob/main/Dockerfile"
 LABEL org.opencontainers.image.source="https://github.com/georglauterbach/dev-container-base/blob/main/README.md"
 
-ARG DMS_RELEASE=edge
 # ARG invalidates the build cache when it is used by a layer
 # (implicitly affects RUN). Thus, to maximize cache, keep these lines last:
+ARG VCS_RELEASE=edge
 ARG VCS_REVISION=unknown
 
 LABEL org.opencontainers.image.version=${VCS_RELEASE}
 LABEL org.opencontainers.image.revision=${VCS_REVISION}
-ENV VCS_RELEASE=${DMS_RELEASE}
+ENV VCS_RELEASE=${VCS_RELEASE}
