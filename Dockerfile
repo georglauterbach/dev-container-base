@@ -13,8 +13,12 @@ RUN <<EOM
   export DEBIAN_FRONTEND=noninteractive
   export DEBCONF_NONINTERACTIVE_SEEN=true
 
+  # Make sure we use the most recent versions of packages
+  # from the base image. Here, `dist-upgrade` is okay as well,
+  # because we do not have prior commands installing software
+  # that could potentially be damaged.
   apt-get --yes update
-  apt-get --yes upgrade
+  apt-get --yes dist-upgrade
   apt-get --yes install --no-install-recommends apt-utils ca-certificates curl doas
 
   # We run Hermes (https://github.com/georglauterbach/hermes) here to easily
