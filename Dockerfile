@@ -17,6 +17,8 @@ RUN <<EOM
   apt-get --yes upgrade
   apt-get --yes install --no-install-recommends apt-utils ca-certificates curl doas
 
+  # We run Hermes (https://github.com/georglauterbach/hermes) here to easily
+  # set up default tools and configurations.
   export USER="${USER}"
   export HOME="/home/${USER}"
   export LOG_LEVEL='trace'
@@ -24,11 +26,15 @@ RUN <<EOM
     'https://raw.githubusercontent.com/georglauterbach/hermes/main/setup.sh'
   bash /tmp/setup.sh --assume-correct-incovation --assume-data-is-correct
 
+  # Last but not least, we clean up superflous cache files from APT.
   apt-get --yes autoremove
   apt-get --yes clean
   rm -rf /var/lib/apt/lists/* /tmp/*
 EOM
 
+# This stage set's up the previously installed package `doas`, a
+# sudo replacement. We configure it so that the user `ubuntu` can
+# passwordless execute root commands by running `sudo ...`.
 RUN <<EOM
   echo "permit nopass ${USER}" >/etc/doas.conf
   chown root:root /etc/doas.conf
@@ -40,7 +46,7 @@ EOM
 USER ${USER}
 WORKDIR /home/${USER}
 
-# Add metadata to image:
+# Finally, we add metadata to the image.
 LABEL org.opencontainers.image.title="Custom Development Container Base Image"
 LABEL org.opencontainers.image.vendor="Georg Lauterbach (@georglauterbach)"
 LABEL org.opencontainers.image.authors="Georg Lauterbach (@georglauterbach)"
@@ -50,9 +56,9 @@ LABEL org.opencontainers.image.url="https://github.com/georglauterbach/dev-conta
 LABEL org.opencontainers.image.documentation="https://github.com/georglauterbach/dev-container-base/blob/main/Dockerfile"
 LABEL org.opencontainers.image.source="https://github.com/georglauterbach/dev-container-base/blob/main/README.md"
 
-# ARG invalidates cache when it is used by a layer (implicitly affects RUN)
-# Thus to maximize cache, keep these lines last:
 ARG DMS_RELEASE=edge
+# ARG invalidates the build cache when it is used by a layer
+# (implicitly affects RUN). Thus, to maximize cache, keep these lines last:
 ARG VCS_REVISION=unknown
 
 LABEL org.opencontainers.image.version=${VCS_RELEASE}
