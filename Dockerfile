@@ -18,7 +18,9 @@ RUN <<EOM
   # because we do not have prior commands installing software
   # that could potentially be damaged.
   apt-get --yes update
+  # hadolint ignore=DL3005
   apt-get --yes dist-upgrade
+  # hadolint ignore=DL3008
   apt-get --yes install --no-install-recommends apt-utils ca-certificates curl doas
 
   # We run Hermes (https://github.com/georglauterbach/hermes) here to easily
