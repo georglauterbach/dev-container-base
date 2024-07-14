@@ -30,9 +30,9 @@ RUN <<EOM
   export LOG_LEVEL='trace'
   curl --silent --show-error --fail --location --output '/tmp/setup.sh' \
     'https://raw.githubusercontent.com/georglauterbach/hermes/main/setup.sh'
-  bash /tmp/setup.sh --assume-correct-incovation --assume-data-is-correct
+  bash /tmp/setup.sh --assume-correct-invocation --assume-data-is-correct
 
-  # Last but not least, we clean up superflous cache files from APT.
+  # Last but not least, we clean up superfluous cache files from APT.
   apt-get --yes autoremove
   apt-get --yes clean
   rm -rf /var/lib/apt/lists/* /tmp/*
@@ -40,7 +40,7 @@ EOM
 
 # This stage set's up the previously installed package `doas`, a
 # sudo replacement. We configure it so that the user `ubuntu` can
-# passwordless execute root commands by running `sudo ...`.
+# password-less execute root commands by running `sudo ...`.
 RUN <<EOM
   echo "permit nopass ${USER}" >/etc/doas.conf
   chown root:root /etc/doas.conf

@@ -3,5 +3,9 @@
     "--no-color",
     "--config",
     "./.github/linters/.hadolint.yml"
+  ],
+  "cSpell.words": [
+    "doas",
+    "hadolint"
   ]
 }
