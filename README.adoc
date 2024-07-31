@@ -1,0 +1,33 @@
+= Custom Development Container Base Image
+:toc:
+:source-highlighter: highlight.js
+
+== About
+
+A custom https://containers.dev/[Development Container] base image packed with as many as necessary and as few as possible configurations and applications to make development a breeze.
+
+== Platforms
+
+This image is built for `amd64` and `arm64`.
+
+== Additional Setup
+
+[NOTE]
+.No Custom `ENTRYPOINT`
+====
+We do set a custom `ENTRYPOINT` because
+
+. the entrypoint is overwritten by Development Containers anyway, and
+. we want to make the additional setup optional.
+====
+
+There is a script that you can execute via
+
+[source,json]
+----
+"postCreateCommand": "/usr/local/devcontainer_base/bin/entrypoint.sh"
+----
+
+in your `devcontainer.json` file. link:entrypoint.sh[This script] performs additional setup procedures:
+
+. Run all scripts in `/usr/local/devcontainer_base/init_scripts/` if there are any.

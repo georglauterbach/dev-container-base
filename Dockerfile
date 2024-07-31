@@ -7,13 +7,14 @@ SHELL [ "/bin/bash", "-o", "pipefail", "-eE", "-u", "-c" ]
 
 ENV USER=ubuntu
 
+ENV DEBIAN_FRONTEND=noninteractive
+ENV DEBCONF_NONINTERACTIVE_SEEN=true
+
 # Firstly, we make sure we have all base package that
 # we need as well as all updates.
 #
 # hadolint ignore=DL3005,DL3008
 RUN <<EOM
-  export DEBIAN_FRONTEND=noninteractive
-  export DEBCONF_NONINTERACTIVE_SEEN=true
 
   # Make sure we use the most recent versions of packages
   # from the base image. Here, `dist-upgrade` is okay as well,
@@ -49,8 +50,25 @@ RUN <<EOM
   ln -s "$(command -v doas)" /usr/local/bin/sudo
 EOM
 
-USER ${USER}
-WORKDIR /home/${USER}
+VOLUME [
+  # VS Code saves cache data (e.g. for extensions)
+  "/home/${USER}/.vscode-server"
+]
+
+RUN <<EOM
+  readonly DIRECTORIES=(
+    "/home/${USER}/.vscode-server"
+    "/home/${USER}/.cache/Microsoft"
+  )
+
+  for DIR in "${DIRECTORIES[@]}"; do
+    mkdir -p "${DIR}"
+    chown -R "${USER}:${USER}" "${DIR}"
+  done
+EOM
+
+USER "${USER}"
+WORKDIR "/home/${USER}"
 
 # Finally, we add metadata to the image.
 LABEL org.opencontainers.image.title="Custom Development Container Base Image"
@@ -70,3 +88,9 @@ ARG VCS_REVISION=unknown
 LABEL org.opencontainers.image.version=${VCS_RELEASE}
 LABEL org.opencontainers.image.revision=${VCS_REVISION}
 ENV VCS_RELEASE=${VCS_RELEASE}
+
+COPY entrypoint.sh /usr/local/devcontainer_base/bin/
+
+ENTRYPOINT [ "/bin/bash", "/usr/local/devcontainer_base/entrypoint.sh" ]
+
+CMD [ "/bin/bash" ]
