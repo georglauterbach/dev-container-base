@@ -79,7 +79,7 @@ ENV DEV_CONTAINER_BASE_DIR=/usr/local/devcontainer_base
 # user just needs to execute this script and an additional
 # setup process runs, which may also execute more scripts
 # in `${DEV_CONTAINER_BASE_DIR}/init_scripts`.
-COPY entrypoint.sh "${DEV_CONTAINER_BASE_DIR}/bin/"
+COPY scripts/* "${DEV_CONTAINER_BASE_DIR}/bin/"
 
 # Now, we switch to the user `${USER}` and set the home
 # directory as the new current working directory.
