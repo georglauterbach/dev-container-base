@@ -1,0 +1,24 @@
+{
+  "name": "Dev Container Base Test",
+  "build": {
+    "dockerfile": "Dockerfile",
+    "options": [
+      "--build-arg",
+      "http_proxy=http://proxy.rohde-schwarz.com:9480",
+      "--build-arg",
+      "https_proxy=http://proxy.rohde-schwarz.com:9480"
+    ]
+  },
+  "postCreateCommand": "/usr/local/devcontainer_base/bin/entrypoint.sh",
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "asciidoctor.asciidoctor-vscode",
+        "exiasr.hadolint",
+        "mads-hartmann.bash-ide-vscode",
+        "ms-azuretools.vscode-docker",
+        "timonwong.shellcheck"
+      ]
+    }
+  }
+}
