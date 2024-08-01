@@ -1,13 +1,7 @@
 {
   "name": "Dev Container Base Test",
   "build": {
-    "dockerfile": "Dockerfile",
-    "options": [
-      "--build-arg",
-      "http_proxy=http://proxy.rohde-schwarz.com:9480",
-      "--build-arg",
-      "https_proxy=http://proxy.rohde-schwarz.com:9480"
-    ]
+    "dockerfile": "Dockerfile"
   },
   "postCreateCommand": "/usr/local/devcontainer_base/bin/entrypoint.sh",
   "customizations": {
