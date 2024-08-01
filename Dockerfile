@@ -3,30 +3,35 @@
 ARG UBUNTU_VERSION=24.04
 FROM docker.io/ubuntu:${UBUNTU_VERSION}
 
+# We use bash and not sh.
 SHELL [ "/bin/bash", "-o", "pipefail", "-eE", "-u", "-c" ]
 
+# The user from the Ubuntu base image is `ubuntu`. We provide
+# environment variables that we need later anyway right here.
 ENV USER=ubuntu
+ENV HOME="/home/${USER}"
+
+# These environment variables are used by APT and dpkg. Their
+# values make APT and dpkg behave as non-interactive.
+ENV DEBIAN_FRONTEND=noninteractive
+ENV DEBCONF_NONINTERACTIVE_SEEN=true
 
 # Firstly, we make sure we have all base package that
 # we need as well as all updates.
 #
 # hadolint ignore=DL3005,DL3008
 RUN <<EOM
-  export DEBIAN_FRONTEND=noninteractive
-  export DEBCONF_NONINTERACTIVE_SEEN=true
-
   # Make sure we use the most recent versions of packages
   # from the base image. Here, `dist-upgrade` is okay as well,
   # because we do not have prior commands installing software
   # that could potentially be damaged.
   apt-get --yes update
   apt-get --yes dist-upgrade
-  apt-get --yes install --no-install-recommends apt-utils ca-certificates curl doas
+  apt-get --yes install --no-install-recommends \
+    apt-utils ca-certificates curl dialog doas
 
-  # We run Hermes (https://github.com/georglauterbach/hermes) here to easily
-  # set up default tools and configurations.
-  export USER="${USER}"
-  export HOME="/home/${USER}"
+  # We run Hermes (https://github.com/georglauterbach/hermes) here
+  # to easily set up default tools and configurations.
   export LOG_LEVEL='trace'
   curl --silent --show-error --fail --location --output '/tmp/setup.sh' \
     'https://raw.githubusercontent.com/georglauterbach/hermes/main/setup.sh'
@@ -36,6 +41,23 @@ RUN <<EOM
   apt-get --yes autoremove
   apt-get --yes clean
   rm -rf /var/lib/apt/lists/* /tmp/*
+EOM
+
+# We use anonymous volumes for certain directories to work
+# properly; especially the user cache and VS Code cache. This
+# VOLUME directive only works in conjunction with the
+# next `RUN` directive.
+VOLUME [ "${HOME}/.cache", "${HOME}/.vscode-server" ]
+
+# This directive is tied to the previous `VOLUME` command
+# and sets the correct permissions on the previously
+# established anonymous volumes.
+RUN <<EOM
+  mkdir -p "${HOME}/.vscode-server"
+  chown -R "${USER}:${USER}" "${HOME}/.vscode-server"
+
+  mkdir -p "${HOME}/.cache"
+  chown -R "${USER}:${USER}" "${HOME}/.cache"
 EOM
 
 # This stage set's up the previously installed package `doas`, a
@@ -49,8 +71,20 @@ RUN <<EOM
   ln -s "$(command -v doas)" /usr/local/bin/sudo
 EOM
 
-USER ${USER}
-WORKDIR /home/${USER}
+# The variable can be used later to refer to the directory
+# that potential init script are located in.
+ENV DEV_CONTAINER_BASE_DIR=/usr/local/devcontainer_base
+# We allow users to run a `post{Create,Start,Attach}Command`
+# via `devcontainer.json` to improve the setup procedure. The
+# user just needs to execute this script and an additional
+# setup process runs, which may also execute more scripts
+# in `${DEV_CONTAINER_BASE_DIR}/init_scripts`.
+COPY entrypoint.sh "${DEV_CONTAINER_BASE_DIR}/bin/"
+
+# Now, we switch to the user `${USER}` and set the home
+# directory as the new current working directory.
+USER "${USER}"
+WORKDIR "${HOME}"
 
 # Finally, we add metadata to the image.
 LABEL org.opencontainers.image.title="Custom Development Container Base Image"
@@ -63,10 +97,13 @@ LABEL org.opencontainers.image.documentation="https://github.com/georglauterbach
 LABEL org.opencontainers.image.source="https://github.com/georglauterbach/dev-container-base/blob/main/README.md"
 
 # ARG invalidates the build cache when it is used by a layer
-# (implicitly affects RUN). Thus, to maximize cache, keep these lines last:
+# (implicitly affects RUN). Thus, to maximize cache, keep
+# these lines last:
 ARG VCS_RELEASE=edge
 ARG VCS_REVISION=unknown
 
+# Last but not least, we provide the version information
+# for this image.
 LABEL org.opencontainers.image.version=${VCS_RELEASE}
 LABEL org.opencontainers.image.revision=${VCS_REVISION}
 ENV VCS_RELEASE=${VCS_RELEASE}
