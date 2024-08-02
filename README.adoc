@@ -47,6 +47,6 @@ There is a script that you can execute via
 "postCreateCommand": "/usr/local/devcontainer_base/bin/entrypoint.sh"
 ----
 
-in your `devcontainer.json` file. link:entrypoint.sh[This script] performs additional setup procedures:
+in your `devcontainer.json` file. link:scripts/entrypoint.sh[This script] performs additional setup procedures:
 
 . Run all scripts in `/usr/local/devcontainer_base/init_scripts/` if there are any. You can copy scripts into this directory when you build on top of this image, or you can mount a volume to this directory.
