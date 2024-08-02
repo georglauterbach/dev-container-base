@@ -14,7 +14,7 @@ This image is built for `amd64` and `arm64`.
 
 To properly persist data that should be cached, you need to provide volumes in `devcontainer.json` for the following directories:
 
-[source,json]
+[source,jsonc]
 ----
 {
   // Persist the VS Code Server cache (e.g. for extensions)
