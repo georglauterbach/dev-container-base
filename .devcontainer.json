@@ -3,6 +3,20 @@
   "build": {
     "dockerfile": "Dockerfile"
   },
+  "mounts": [
+    {
+      // Persist the VS Code Server cache (e.g. for extensions)
+      "source": "dev_container_base-cache-vscode_server",
+      "target": "/home/ubuntu/.vscode-server",
+      "type": "volume"
+    },
+    {
+      // Persist the `${HOME}/.cache` directory
+      "source": "dev_container_base-cache-home_cache",
+      "target": "/home/ubuntu/.cache",
+      "type": "volume"
+    }
+  ],
   "postCreateCommand": "/usr/local/devcontainer_base/bin/entrypoint.sh",
   "customizations": {
     "vscode": {

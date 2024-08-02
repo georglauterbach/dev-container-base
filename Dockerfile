@@ -43,15 +43,9 @@ RUN <<EOM
   rm -rf /var/lib/apt/lists/* /tmp/*
 EOM
 
-# We use anonymous volumes for certain directories to work
-# properly; especially the user cache and VS Code cache. This
-# VOLUME directive only works in conjunction with the
-# next `RUN` directive.
-VOLUME [ "${HOME}/.cache", "${HOME}/.vscode-server" ]
-
-# This directive is tied to the previous `VOLUME` command
-# and sets the correct permissions on the previously
-# established anonymous volumes.
+# We need to make sure that these directories have correct
+# permissions, so that when mounting volumes to them, they
+# can be used correctly.
 RUN <<EOM
   mkdir -p "${HOME}/.vscode-server"
   chown -R "${USER}:${USER}" "${HOME}/.vscode-server"

@@ -10,8 +10,29 @@ This image is built for `amd64` and `arm64`.
 
 == Additional Setup
 
+=== Proper Caching
+
+To properly persist data that should be cached, you need to provide volumes in `devcontainer.json` for the following directories:
+
+[source,json]
+----
+{
+  // Persist the VS Code Server cache (e.g. for extensions)
+  "source": "<PROJECT>-cache-vscode_server",
+  "target": "/home/ubuntu/.vscode-server",
+  "type": "volume"
+},
+{
+  // Persist the `${HOME}/.cache` directory
+  "source": "<PROJECT>-cache-home_cache",
+  "target": "/home/ubuntu/.cache",
+  "type": "volume"
+}
+----
+
+=== Image Entrypoint & Setup
+
 [NOTE]
-.No Custom `ENTRYPOINT`
 ====
 We do not set a custom `ENTRYPOINT` with this image because
 
@@ -28,4 +49,4 @@ There is a script that you can execute via
 
 in your `devcontainer.json` file. link:entrypoint.sh[This script] performs additional setup procedures:
 
-. Run all scripts in `/usr/local/devcontainer_base/init_scripts/` if there are any.
+. Run all scripts in `/usr/local/devcontainer_base/init_scripts/` if there are any. You can copy scripts into this directory when you build on top of this image, or you can mount a volume to this directory.
