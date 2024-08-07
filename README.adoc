@@ -17,9 +17,9 @@ To properly persist data that should be cached, you need to provide volumes in `
 [source,jsonc]
 ----
 {
-  // Persist the VS Code Server cache (e.g. for extensions)
-  "source": "<PROJECT>-cache-vscode_server",
-  "target": "/home/ubuntu/.vscode-server",
+  // Persist the VS Code extension cache
+  "source": "<PROJECT>-cache-vscode_extensions",
+  "target": "/home/ubuntu/.vscode-server/extensions",
   "type": "volume"
 },
 {
@@ -29,6 +29,11 @@ To properly persist data that should be cached, you need to provide volumes in `
   "type": "volume"
 }
 ----
+
+[IMPORTANT]
+====
+While this image performs permission adjustments for `/home/ubuntu/.vscode-server`, you should mount the volume to cache extensions to `/home/ubuntu/.vscode-server/extensions`. Otherwise, the Development Container settings are https://news.ycombinator.com/item?id=23113314[cached] as well, which may leed to these settings not being updated.
+====
 
 === Image Entrypoint & Setup
 
