@@ -27,9 +27,7 @@
       "extensions": [
         "asciidoctor.asciidoctor-vscode",
         "exiasr.hadolint",
-        "mads-hartmann.bash-ide-vscode",
-        "ms-azuretools.vscode-docker",
-        "timonwong.shellcheck"
+        "ms-azuretools.vscode-docker"
       ]
     }
   }

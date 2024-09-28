@@ -96,4 +96,3 @@ ARG VCS_REVISION=unknown
 # for this image.
 LABEL org.opencontainers.image.version=${VCS_RELEASE}
 LABEL org.opencontainers.image.revision=${VCS_REVISION}
-ENV VCS_RELEASE=${VCS_RELEASE}
