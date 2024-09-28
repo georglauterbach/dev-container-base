@@ -9,6 +9,8 @@ This container image partially builds on https://github.com/georglauterbach/herm
 
 Additonally, we configure common directories (like `${HOME}/.cache`) with the correct permissions. We also set up `doas` so that you can simply run `sudo` inside the container without the need to enter a password.
 
+You can use the environment variable `DEV_CONTAINER_BASE` to check whether you are using this image as a base (and hence, whether you are inside a container). This variable, if set, contains the version of the base image and the version control system revision, separated by a `#`.
+
 We do not set a custom `ENTRYPOINT` with this image because the entrypoint is overwritten by Development Containers anyway, and we want to make the additional setup optional.
 
 == Optional Additional Setup
