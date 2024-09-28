@@ -92,6 +92,13 @@ LABEL org.opencontainers.image.source="https://github.com/georglauterbach/dev-co
 ARG VCS_RELEASE=edge
 ARG VCS_REVISION=unknown
 
+# This variable can be used to determine whether you are
+# inside a Development Container. If it set, you are inside
+# a Development Container that uses this image as a base.
+# It contains the version of this image and the version
+# control system revision, separated by a dash.
+ENV DEV_CONTAINER_BASE=${VCS_RELEASE}#${VCS_REVISION}
+
 # Last but not least, we provide the version information
 # for this image.
 LABEL org.opencontainers.image.version=${VCS_RELEASE}
