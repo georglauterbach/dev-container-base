@@ -8,7 +8,7 @@ on: # yamllint disable-line rule:truthy
   push:
     branches: [ main ]
     tags: [ '*.*.*' ]
-    paths: [ 'Dockerfile' ]
+    paths: [ Dockerfile ]
 
 permissions:
   contents: read
