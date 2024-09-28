@@ -1,14 +1,17 @@
 = Custom Development Container Base Image
 :toc:
-:source-highlighter: highlight.js
 
 == About
 
-A custom https://containers.dev/[Development Container] base image packed with as many as necessary and as few as possible configurations and applications to make development a breeze.
+A custom https://containers.dev/[Development Container] base image packed with as many as necessary and as few as possible configurations and applications to make development a breeze. This image is built for `amd64` and `arm64`. Consult link:./Dockerfile[`Dockerfile`] for the complete set of installation steps.
 
-This image is built for `amd64` and `arm64`.
+This container image partially builds on https://github.com/georglauterbach/hermes[_Hermes_] to install sensible defaults for the console and useful additional programs. Consult the documentation of _Hermes_ if you'd like to further customize the experience.
 
-== Additional Setup
+Additonally, we configure common directories (like `${HOME}/.cache`) with the correct permissions. We also set up `doas` so that you can simply run `sudo` inside the container without the need to enter a password.
+
+We do not set a custom `ENTRYPOINT` with this image because the entrypoint is overwritten by Development Containers anyway, and we want to make the additional setup optional.
+
+== Optional Additional Setup
 
 === Proper Caching
 
@@ -32,13 +35,5 @@ To properly persist data that should be cached, you need to provide volumes in `
 
 [IMPORTANT]
 ====
-While this image performs permission adjustments for `/home/ubuntu/.vscode-server`, you should mount the volume for caching extensions to `/home/ubuntu/.vscode-server/extensions`. Otherwise, the Development Container settings are https://news.ycombinator.com/item?id=23113314[cached] as well, which may leed to these settings not being updated.
-====
-
-[NOTE]
-====
-We do not set a custom `ENTRYPOINT` with this image because
-
-. the entrypoint is overwritten by Development Containers anyway, and
-. we want to make the additional setup optional.
+While this image performs permission adjustments for `/home/ubuntu/.vscode-server`, you should mount the volume for caching extensions to `/home/ubuntu/.vscode-server/extensions`. Otherwise, the Development Container settings are https://news.ycombinator.com/item?id=23113314[cached] as well, which may leed to your settings not being updated.
 ====

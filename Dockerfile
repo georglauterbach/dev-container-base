@@ -35,13 +35,19 @@ RUN <<EOM
   export LOG_LEVEL='trace'
   curl --silent --show-error --fail --location --output '/tmp/setup.sh' \
     'https://raw.githubusercontent.com/georglauterbach/hermes/main/setup.sh'
-  bash /tmp/setup.sh --assume-correct-invocation --assume-data-is-correct
+  bash /tmp/setup.sh --assume-correct-invocation --assume-data-is-correct --version '2.3.0'
 
   # Last but not least, we clean up superfluous cache files from APT.
   apt-get --yes autoremove
   apt-get --yes clean
   rm -rf /var/lib/apt/lists/* /tmp/*
 EOM
+
+# We installed Hermes (https://github.com/georglauterbach/hermes) in the RUN stage
+# before, and we enable extra console configurations by setting these environment
+# variables.
+ENV HERMES_LOAD_EXTRA_PROGRAMS=true
+ENV HERMES_LOAD_ALIASES=true
 
 # We need to make sure that these directories have correct
 # permissions, so that when mounting volumes to them, they

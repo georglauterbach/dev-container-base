@@ -3,6 +3,10 @@
   "build": {
     "dockerfile": "Dockerfile"
   },
+  "containerEnv": {
+    "HERMES_LOAD_EXTRA_PROGRAMS": "true",
+    "HERMES_LOAD_ALIASES": "true"
+  },
   "mounts": [
     {
       // Persist the VS Code Server cache (e.g. for extensions)
