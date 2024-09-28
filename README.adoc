@@ -35,8 +35,6 @@ To properly persist data that should be cached, you need to provide volumes in `
 While this image performs permission adjustments for `/home/ubuntu/.vscode-server`, you should mount the volume for caching extensions to `/home/ubuntu/.vscode-server/extensions`. Otherwise, the Development Container settings are https://news.ycombinator.com/item?id=23113314[cached] as well, which may leed to these settings not being updated.
 ====
 
-=== Image Entrypoint & Setup
-
 [NOTE]
 ====
 We do not set a custom `ENTRYPOINT` with this image because
@@ -44,14 +42,3 @@ We do not set a custom `ENTRYPOINT` with this image because
 . the entrypoint is overwritten by Development Containers anyway, and
 . we want to make the additional setup optional.
 ====
-
-There is a script that you can execute via
-
-[source,json]
-----
-"postCreateCommand": "/usr/local/devcontainer_base/bin/entrypoint.sh"
-----
-
-in your `devcontainer.json` file. link:scripts/entrypoint.sh[This script] performs additional setup procedures:
-
-. Run all scripts in `/usr/local/devcontainer_base/init_scripts/` if there are any. You can copy scripts into this directory when you build on top of this image, or you can mount a volume to this directory.

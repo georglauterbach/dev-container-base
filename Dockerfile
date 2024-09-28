@@ -65,16 +65,6 @@ RUN <<EOM
   ln -s "$(command -v doas)" /usr/local/bin/sudo
 EOM
 
-# The variable can be used later to refer to the directory
-# that potential init script are located in.
-ENV DEV_CONTAINER_BASE_DIR=/usr/local/devcontainer_base
-# We allow users to run a `post{Create,Start,Attach}Command`
-# via `devcontainer.json` to improve the setup procedure. The
-# user just needs to execute this script and an additional
-# setup process runs, which may also execute more scripts
-# in `${DEV_CONTAINER_BASE_DIR}/init_scripts`.
-COPY scripts/* "${DEV_CONTAINER_BASE_DIR}/bin/"
-
 # Now, we switch to the user `${USER}` and set the home
 # directory as the new current working directory.
 USER "${USER}"
