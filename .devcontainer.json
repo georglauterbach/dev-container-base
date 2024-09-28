@@ -21,7 +21,7 @@
       "type": "volume"
     }
   ],
-  "postCreateCommand": "/usr/local/devcontainer_base/bin/entrypoint.sh",
+  "postCreateCommand": "sudo curl -sSfL -o /usr/local/bin/hadolint \"https://github.com/hadolint/hadolint/releases/download/v2.12.0/hadolint-Linux-$(uname -m)\" && sudo chmod +x /usr/local/bin/hadolint",
   "customizations": {
     "vscode": {
       "extensions": [
