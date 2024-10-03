@@ -39,3 +39,7 @@ To properly persist data that should be cached, you need to provide volumes in `
 ====
 While this image performs permission adjustments for `/home/ubuntu/.vscode-server`, you should mount the volume for caching extensions to `/home/ubuntu/.vscode-server/extensions`. Otherwise, the Development Container settings are https://news.ycombinator.com/item?id=23113314[cached] as well, which may leed to your settings not being updated.
 ====
+
+=== Locale Setup
+
+When building on top of this image, you can call `sudo update_locales.sh <LOCALE>` to set a new locale. The default is `en_US.UTF-8`.
