@@ -35,7 +35,7 @@ RUN <<EOM
   export LOG_LEVEL='trace'
   curl --silent --show-error --fail --location --output '/tmp/setup.sh' \
     'https://raw.githubusercontent.com/georglauterbach/hermes/main/setup.sh'
-  bash /tmp/setup.sh --assume-correct-invocation --assume-data-is-correct --version '2.3.1'
+  bash /tmp/setup.sh --assume-correct-invocation --assume-data-is-correct --version '2.4.0'
 
   # We update the locales next. We want en_US.UTF-8 to be the standard locale.
   curl -sSfL -o /usr/local/bin/update_locales.sh 'https://raw.githubusercontent.com/georglauterbach/hermes/refs/tags/2.3.2/misc/setup_locales.sh'
