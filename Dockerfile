@@ -16,6 +16,12 @@ ENV HOME="/home/${USER}"
 ENV DEBIAN_FRONTEND=noninteractive
 ENV DEBCONF_NONINTERACTIVE_SEEN=true
 
+# These variables are used to determine the version of Hermes
+# this this image is base upon. To propagate the version, a
+# more descriptive ENV variable is used too.
+ARG HERMES_VERSION='2.4.0'
+ENV DEV_CONTAINER_BASE_HERMES_VERSION=${HERMES_VERSION}
+
 # Firstly, we make sure we have all base package that
 # we need as well as all updates.
 #
@@ -30,15 +36,18 @@ RUN <<EOM
   apt-get --yes install --no-install-recommends \
     apt-utils ca-certificates curl dialog doas locales
 
+  # This URI is for convenience and keeps `curl` and the like short, correct and concise.
+  readonly HERMES_BASE_URI='https://raw.githubusercontent.com/georglauterbach/hermes'
+
   # We run Hermes (https://github.com/georglauterbach/hermes) here
   # to easily set up default tools and configurations.
   export LOG_LEVEL='trace'
-  curl --silent --show-error --fail --location --output '/tmp/setup.sh' \
-    'https://raw.githubusercontent.com/georglauterbach/hermes/main/setup.sh'
-  bash /tmp/setup.sh --assume-correct-invocation --assume-data-is-correct --version '2.4.0'
+  curl --silent --show-error --fail --location --output '/tmp/setup.sh' "${HERMES_BASE_URI}/main/setup.sh"
+  bash /tmp/setup.sh --assume-correct-invocation --assume-data-is-correct --version "${HERMES_VERSION}"
 
   # We update the locales next. We want en_US.UTF-8 to be the standard locale.
-  curl -sSfL -o /usr/local/bin/update_locales.sh 'https://raw.githubusercontent.com/georglauterbach/hermes/refs/tags/2.3.2/misc/setup_locales.sh'
+  curl -sSfL -o /usr/local/bin/update_locales.sh \
+    "${HERMES_BASE_URI}/refs/tags/${HERMES_VERSION}/misc/setup_locales.sh"
   chmod +x /usr/local/bin/update_locales.sh
   update_locales.sh 'en_US.UTF-8'
 
