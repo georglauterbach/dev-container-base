@@ -1,17 +1,26 @@
 = Custom Development Container Base Image
 :toc:
 
+:link-dev_containers: https://containers.dev/
+:link-hermes: https://github.com/georglauterbach/hermes
+
 == About
 
-A custom https://containers.dev/[Development Container] base image packed with as many as necessary and as few as possible configurations and applications to make development a breeze. This image is built for `amd64` and `arm64`. Consult link:./Dockerfile[`Dockerfile`] for the complete set of installation steps.
+When working with link:{link-dev_containers}[Development Containers], you most likely build on top of existing images to utilize their existing tools and configuration. This project provides an image packed with as many as necessary and as few as possible configurations and applications to make development a breeze. You can use this image directly, or build on top of it, when configuring your Development Container.
 
-This container image partially builds on https://github.com/georglauterbach/hermes[_Hermes_] to install sensible defaults for the console and useful additional programs. Consult the documentation of _Hermes_ if you'd like to further customize the experience.
+== Technical Information
 
-Additonally, we configure common directories (like `${HOME}/.cache`) with the correct permissions. We also set up `doas` so that you can simply run `sudo` inside the container without the need to enter a password.
+This image
 
-You can use the environment variable `DEV_CONTAINER_BASE` to check whether you are using this image as a base (and hence, whether you are inside a container). This variable, if set, contains the version of the base image and the version control system revision, separated by a `#`.
-
-We do not set a custom `ENTRYPOINT` with this image because the entrypoint is overwritten by Development Containers anyway, and we want to make the additional setup optional.
+. is based on link:https://hub.docker.com/_/ubuntu[`docker.io/ubuntu`] and built for `amd64` and `arm64`. Consult link:./Dockerfile[`Dockerfile`] for the complete set of installation steps.
+. heavily builds on link:{link-hermes}[_hermes_] to install sensible defaults for the console and useful additional programs. Consult the documentation of _hermes_ if you'd like to further customize the experience. This can be achieved via _hermes_' https://github.com/georglauterbach/hermes?tab=readme-ov-file#optional-additional-setup[additional optional setup].
+. configures common directories (like `${HOME}/.cache`) with the correct permissions.
+. sets environment variables such as
+.. `DEV_CONTAINER_BASE_VERSION=<RELEASE VERSION>#<VERSION CONTROL SYSTEM REVISION>` to check that you are inside a container, to check that you are using this image as a base, and to acquire information about the actual version.
+.. `DEV_CONTAINER_BASE_HERMES_VERSION=<VERSION OF HERMES USED FOR BUILDING>` to qcquire information about the version of link:{link-hermes}[_hermes_] that is used.
+. sets up `doas` so that you can simply run `sudo` inside the container without the need to enter a password.
+. sets up a system locale, defaulting to `en_US.UTF-8`.
+. does not set nor require a custom `ENTRYPOINT`.
 
 == Optional Additional Setup
 
