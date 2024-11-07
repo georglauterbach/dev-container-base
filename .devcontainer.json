@@ -28,7 +28,10 @@
         "asciidoctor.asciidoctor-vscode",
         "exiasr.hadolint",
         "ms-azuretools.vscode-docker"
-      ]
+      ],
+      "settings": {
+        "asciidoc.antora.showEnableAntoraPrompt": false
+      }
     }
   }
 }
