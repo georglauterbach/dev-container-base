@@ -67,7 +67,11 @@ ENV HERMES_LOAD_ALIASES=true
 # permissions, so that when mounting volumes to them, they
 # can be used correctly.
 RUN <<EOM
-  mkdir -p "${HOME}/.vscode-server"
+  # We create the `extensions/` directory, but we adjust permissions for the parent
+  # directory - this is intended. Otherwise, the permissions, when one mounts a
+  # volume to `extensions/`, will be wrong (the directory may belong to `root`
+  # instead of `${USER}`).
+  mkdir -p "${HOME}/.vscode-server/extensions"
   chown -R "${USER}:${USER}" "${HOME}/.vscode-server"
 
   mkdir -p "${HOME}/.cache"
