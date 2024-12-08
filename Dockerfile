@@ -34,7 +34,7 @@ RUN <<EOM
   apt-get --yes update
   apt-get --yes dist-upgrade
   apt-get --yes install --no-install-recommends \
-    apt-utils ca-certificates curl dialog doas locales
+    apt-utils ca-certificates curl dialog doas file locales
 
   # This URI is for convenience and keeps `curl` and the like short, correct and concise.
   readonly HERMES_BASE_URI='https://raw.githubusercontent.com/georglauterbach/hermes'
