@@ -19,7 +19,7 @@ ENV DEBCONF_NONINTERACTIVE_SEEN=true
 # These variables are used to determine the version of Hermes
 # this this image is base upon. To propagate the version, a
 # more descriptive ENV variable is used too.
-ARG HERMES_VERSION='v3.0.0-beta.9'
+ARG HERMES_VERSION='v3.0.0-beta.10'
 ENV DEV_CONTAINER_BASE_HERMES_VERSION=${HERMES_VERSION}
 
 # Firstly, we make sure we have all base package that
@@ -62,7 +62,7 @@ RUN <<EOM
     "https://raw.githubusercontent.com/georglauterbach/hermes/refs/tags/${HERMES_VERSION}/misc/setup_locales.sh"
   chmod +x /usr/local/bin/update_locales.sh
   update_locales.sh 'en_US.UTF-8'
-  
+
   # We need to make sure that the following directories have correct
   # permissions, so that when mounting volumes to them, they
   # can be used correctly.
