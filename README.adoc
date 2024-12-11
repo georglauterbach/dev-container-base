@@ -13,7 +13,7 @@ When working with link:{link-dev_containers}[Development Containers], you most l
 This image
 
 . is based on link:https://hub.docker.com/_/ubuntu[`docker.io/ubuntu`] and built for `amd64` and `arm64`. Consult link:./Dockerfile[`Dockerfile`] for the complete set of installation steps.
-. heavily builds on link:{link-hermes}[_hermes_] to install sensible defaults for the console and useful additional programs. Consult the documentation of _hermes_ if you'd like to further customize the experience. This can be achieved via _hermes_' https://github.com/georglauterbach/hermes?tab=readme-ov-file#optional-additional-setup[additional optional setup].
+. heavily builds on link:{link-hermes}[_hermes_] to install sensible defaults for the console and useful additional programs. Consult the documentation of link:{link-hermes}[_hermes_] if you'd like to further customize the experience. The process is described https://github.com/georglauterbach/hermes?tab=readme-ov-file#optional-additional-setup[here].
 . configures common directories (like `${HOME}/.cache`) with the correct permissions.
 . sets environment variables such as
 .. `DEV_CONTAINER_BASE_VERSION=<RELEASE VERSION>#<VERSION CONTROL SYSTEM REVISION>` to check that you are inside a container, to check that you are using this image as a base, and to acquire information about the actual version.

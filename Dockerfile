@@ -66,7 +66,7 @@ RUN <<EOM
   # We need to make sure that the following directories have correct
   # permissions, so that when mounting volumes to them, they
   # can be used correctly.
- 
+
   # We create the `extensions/` directory, but we adjust permissions for the parent
   # directory - this is intended. Otherwise, the permissions, when one mounts a
   # volume to `extensions/`, will be wrong (the directory may belong to `root`
