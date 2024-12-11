@@ -19,7 +19,7 @@ ENV DEBCONF_NONINTERACTIVE_SEEN=true
 # These variables are used to determine the version of Hermes
 # this this image is base upon. To propagate the version, a
 # more descriptive ENV variable is used too.
-ARG HERMES_VERSION='v3.0.0-beta.8'
+ARG HERMES_VERSION='v3.0.0-beta.9'
 ENV DEV_CONTAINER_BASE_HERMES_VERSION=${HERMES_VERSION}
 
 # Firstly, we make sure we have all base package that
@@ -36,6 +36,15 @@ RUN <<EOM
   apt-get --yes install --no-install-recommends \
     apt-utils ca-certificates curl dialog doas file locales
 
+  # This stage set's up the previously installed package `doas`, a
+  # sudo replacement. We configure it so that the user `ubuntu` can
+  # password-less execute root commands by running `sudo ...`.
+  echo "permit nopass ${USER}" >/etc/doas.conf
+  chown root:root /etc/doas.conf
+  chmod 0400 /etc/doas.conf
+  doas -C /etc/doas.conf
+  ln -s "$(command -v doas)" /usr/local/bin/sudo
+
   # We run Hermes (https://github.com/georglauterbach/hermes) here
   # to easily set up default tools and configurations.
   curl --silent --show-error --fail --location --output /usr/local/bin/hermes \
@@ -43,28 +52,21 @@ RUN <<EOM
   chmod +x /usr/local/bin/hermes
   su "${USER}" -c "hermes --verbose --non-interactive"
 
+  # Last but not least, we clean up superfluous cache files from APT.
+  apt-get --yes autoremove
+  apt-get --yes clean
+  rm -rf /var/lib/apt/lists/* /tmp/*
+
   # We update the locales next. We want en_US.UTF-8 to be the standard locale.
   curl --silent --show-error --fail --location --output /usr/local/bin/update_locales.sh \
     "https://raw.githubusercontent.com/georglauterbach/hermes/refs/tags/${HERMES_VERSION}/misc/setup_locales.sh"
   chmod +x /usr/local/bin/update_locales.sh
   update_locales.sh 'en_US.UTF-8'
-
-  # Last but not least, we clean up superfluous cache files from APT.
-  apt-get --yes autoremove
-  apt-get --yes clean
-  rm -rf /var/lib/apt/lists/* /tmp/*
-EOM
-
-# We installed Hermes (https://github.com/georglauterbach/hermes) in the RUN stage
-# before, and we enable extra console configurations by setting these environment
-# variables.
-ENV HERMES_LOAD_EXTRA_PROGRAMS=true
-ENV HERMES_LOAD_ALIASES=true
-
-# We need to make sure that these directories have correct
-# permissions, so that when mounting volumes to them, they
-# can be used correctly.
-RUN <<EOM
+  
+  # We need to make sure that the following directories have correct
+  # permissions, so that when mounting volumes to them, they
+  # can be used correctly.
+ 
   # We create the `extensions/` directory, but we adjust permissions for the parent
   # directory - this is intended. Otherwise, the permissions, when one mounts a
   # volume to `extensions/`, will be wrong (the directory may belong to `root`
@@ -74,17 +76,6 @@ RUN <<EOM
 
   mkdir -p "${HOME}/.cache"
   chown -R "${USER}:${USER}" "${HOME}/.cache"
-EOM
-
-# This stage set's up the previously installed package `doas`, a
-# sudo replacement. We configure it so that the user `ubuntu` can
-# password-less execute root commands by running `sudo ...`.
-RUN <<EOM
-  echo "permit nopass ${USER}" >/etc/doas.conf
-  chown root:root /etc/doas.conf
-  chmod 0400 /etc/doas.conf
-  doas -C /etc/doas.conf
-  ln -s "$(command -v doas)" /usr/local/bin/sudo
 EOM
 
 # Now, we switch to the user `${USER}` and set the home
