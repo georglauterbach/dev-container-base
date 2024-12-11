@@ -36,19 +36,16 @@ RUN <<EOM
   apt-get --yes install --no-install-recommends \
     apt-utils ca-certificates curl dialog doas file locales
 
-  # This URI is for convenience and keeps `curl` and the like short, correct and concise.
-  readonly HERMES_BASE_URI='https://raw.githubusercontent.com/georglauterbach/hermes'
-
   # We run Hermes (https://github.com/georglauterbach/hermes) here
   # to easily set up default tools and configurations.
   curl --silent --show-error --fail --location --output /usr/local/bin/hermes \
     "https://github.com/georglauterbach/hermes/releases/download/${HERMES_VERSION}/hermes-${HERMES_VERSION}-$(uname -m)-unknown-linux-musl"
   chmod +x /usr/local/bin/hermes
-  hermes --non-interactive
+  su "${USER}" -c "hermes --verbose --non-interactive"
 
   # We update the locales next. We want en_US.UTF-8 to be the standard locale.
-  curl -sSfL -o /usr/local/bin/update_locales.sh \
-    "${HERMES_BASE_URI}/refs/tags/${HERMES_VERSION}/misc/setup_locales.sh"
+  curl --silent --show-error --fail --location --output /usr/local/bin/update_locales.sh \
+    "https://raw.githubusercontent.com/georglauterbach/hermes/refs/tags/${HERMES_VERSION}/misc/setup_locales.sh"
   chmod +x /usr/local/bin/update_locales.sh
   update_locales.sh 'en_US.UTF-8'
 
