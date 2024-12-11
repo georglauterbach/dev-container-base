@@ -19,7 +19,7 @@ ENV DEBCONF_NONINTERACTIVE_SEEN=true
 # These variables are used to determine the version of Hermes
 # this this image is base upon. To propagate the version, a
 # more descriptive ENV variable is used too.
-ARG HERMES_VERSION='2.4.0'
+ARG HERMES_VERSION='v3.0.0-beta.5'
 ENV DEV_CONTAINER_BASE_HERMES_VERSION=${HERMES_VERSION}
 
 # Firstly, we make sure we have all base package that
@@ -41,9 +41,10 @@ RUN <<EOM
 
   # We run Hermes (https://github.com/georglauterbach/hermes) here
   # to easily set up default tools and configurations.
-  export LOG_LEVEL='trace'
-  curl --silent --show-error --fail --location --output '/tmp/setup.sh' "${HERMES_BASE_URI}/main/setup.sh"
-  bash /tmp/setup.sh --assume-correct-invocation --assume-data-is-correct --version "${HERMES_VERSION}"
+  curl --silent --show-error --fail --location --output /usr/local/bin/hermes \
+    "https://github.com/georglauterbach/hermes/releases/download/${HERMES_VERSION}/hermes-${HERMES_VERSION}-$(uname -m)-unknown-linux-musl"
+  chmod +x /usr/local/bin/hermes
+  hermes --non-interactive
 
   # We update the locales next. We want en_US.UTF-8 to be the standard locale.
   curl -sSfL -o /usr/local/bin/update_locales.sh \
