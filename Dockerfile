@@ -19,7 +19,10 @@ ARG HERMES_VERSION='v3.0.0-beta.11'
 ENV DEV_CONTAINER_BASE_HERMES_VERSION=${HERMES_VERSION}
 
 # hadolint ignore=DL3005,DL3008
-RUN /bin/bash -o pipefail -eE -u -c <<EOM
+RUN /bin/bash <<EOM
+  set -o pipefail -eE -u
+  shopt -s inherit_errexit
+
   # We ensure we use the most recent versions of packages from the base image. Here,
   # `dist-upgrade` is okay as well, because we do not have prior commands installing
   # software that could potentially be damaged.
@@ -57,7 +60,10 @@ EOM
 USER "${USER}"
 WORKDIR "${HOME}"
 
-RUN /bin/bash -o pipefail -eE -u -c <<EOM
+RUN /bin/bash <<EOM
+  set -o pipefail -eE -u
+  shopt -s inherit_errexit
+
   hermes --verbose --non-interactive
   sudo apt-get --yes clean
   sudo rm -rf /var/lib/apt/lists/* /tmp/*
