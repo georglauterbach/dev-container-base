@@ -65,8 +65,8 @@ RUN <<EOM
   shopt -s inherit_errexit
 
   hermes --verbose --non-interactive
-  sudo apt-get --yes clean
-  sudo rm -rf /var/lib/apt/lists/* /tmp/*
+  doas apt-get --yes clean
+  doas rm -rf /var/lib/apt/lists/* /tmp/*
 
   # The following directories are likely mount points, and need correct ownership.
   mkdir -p '.vscode-server/extensions' '.cache'
