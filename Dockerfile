@@ -19,8 +19,8 @@ ARG HERMES_VERSION='v3.0.0-beta.11'
 ENV DEV_CONTAINER_BASE_HERMES_VERSION=${HERMES_VERSION}
 
 # hadolint ignore=DL3005,DL3008
-RUN /bin/bash <<EOM
-  set -o pipefail -eE -u
+RUN <<EOM
+#! /usr/bin/env -S bash -o pipefail -eE -u
   shopt -s inherit_errexit
 
   # We ensure we use the most recent versions of packages from the base image. Here,
@@ -60,8 +60,8 @@ EOM
 USER "${USER}"
 WORKDIR "${HOME}"
 
-RUN /bin/bash <<EOM
-  set -o pipefail -eE -u
+RUN <<EOM
+#! /usr/bin/env -S bash -o pipefail -eE -u
   shopt -s inherit_errexit
 
   hermes --verbose --non-interactive
