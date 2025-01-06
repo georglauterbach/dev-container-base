@@ -20,8 +20,7 @@ ENV DEV_CONTAINER_BASE_HERMES_VERSION=${HERMES_VERSION}
 
 # hadolint ignore=DL3005,DL3008
 RUN <<EOM
-#! /usr/bin/env -S bash -o pipefail -eE -u
-  shopt -s inherit_errexit
+#! /usr/bin/env -S bash -eE -u -o pipefail -O inherit_errexit
 
   # We ensure we use the most recent versions of packages from the base image. Here,
   # `dist-upgrade` is okay as well, because we do not have prior commands installing
@@ -61,8 +60,7 @@ USER "${USER}"
 WORKDIR "${HOME}"
 
 RUN <<EOM
-#! /usr/bin/env -S bash -o pipefail -eE -u
-  shopt -s inherit_errexit
+#! /usr/bin/env -S bash -eE -u -o pipefail -O inherit_errexit
 
   hermes --verbose --non-interactive
   doas apt-get --yes clean
