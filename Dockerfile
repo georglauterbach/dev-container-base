@@ -18,6 +18,10 @@ ENV DEBCONF_NONINTERACTIVE_SEEN=true
 ARG HERMES_VERSION='v5.0.1'
 ENV DEV_CONTAINER_BASE_HERMES_VERSION=${HERMES_VERSION}
 
+# We configure `tzdata` here so that we do not get prompted later when
+# installing packages (e.g. on an interactive shell).
+ENV TZ=Etc/UTC
+
 # hadolint ignore=DL3005,DL3008
 RUN <<EOM
 #! /usr/bin/env -S bash -eE -u -o pipefail -O inherit_errexit
@@ -28,7 +32,7 @@ RUN <<EOM
   apt-get --yes update
   apt-get --yes dist-upgrade
   apt-get --yes install --no-install-recommends \
-    apt-utils ca-certificates curl dialog doas file locales
+    apt-utils ca-certificates curl dialog doas file locales tzdata
   # We also perform a proper cleanup
   apt-get --yes autoremove
   apt-get --yes clean
