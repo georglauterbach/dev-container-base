@@ -15,7 +15,7 @@ ENV DEBCONF_NONINTERACTIVE_SEEN=true
 
 # These variables are used to determine the version of Hermes this this image is base
 # upon. To propagate the version, a more descriptive ENV variable is used too.
-ARG HERMES_VERSION='v5.0.1'
+ARG HERMES_VERSION='v5.1.0'
 ENV DEV_CONTAINER_BASE_HERMES_VERSION=${HERMES_VERSION}
 
 # We configure `tzdata` here so that we do not get prompted later when
