@@ -54,7 +54,7 @@ RUN <<EOM
 
   # We also update the locales. We want en_US.UTF-8 to be the standard locale.
   curl --silent --show-error --fail --location --output /usr/local/bin/update_locales.sh \
-    "https://raw.githubusercontent.com/georglauterbach/hermes/refs/tags/${HERMES_VERSION}/scripts/setup_locales.sh"
+    "https://raw.githubusercontent.com/georglauterbach/hermes/refs/tags/${HERMES_VERSION}/examples/scripts/setup_locales.sh"
   chmod +x /usr/local/bin/update_locales.sh
   update_locales.sh 'en_US.UTF-8'
 EOM
