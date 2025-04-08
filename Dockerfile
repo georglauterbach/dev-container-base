@@ -1,74 +1,107 @@
-# We use Ubuntu as a base because it comes with frequent updates and a wide variety
-# of packages.
-ARG UBUNTU_VERSION=24.04
-FROM docker.io/ubuntu:${UBUNTU_VERSION}
+# We can use arbitrary base images, but we default to Ubuntu 24.04.
+ARG BASE_IMAGE_REGISTRY=docker.io
+ARG BASE_IMAGE_NAME=ubuntu
+ARG BASE_IMAGE_TAG=24.04
 
-# The user from the Ubuntu base image is `ubuntu`. We provide environment variables
-# that we need later anyway right here.
-ENV USER=ubuntu
-ENV HOME="/home/${USER}"
+FROM ${BASE_IMAGE_REGISTRY}/${BASE_IMAGE_NAME}:${BASE_IMAGE_TAG}
 
-# These environment variables are used by APT and dpkg. Their # values make APT and
-# dpkg behave as non-interactive.
-ENV DEBIAN_FRONTEND=noninteractive
-ENV DEBCONF_NONINTERACTIVE_SEEN=true
+# TODO
+ARG BASE_IMAGE_USER='ubuntu'
+ARG BASE_IMAGE_HOME="/home/${BASE_IMAGE_USER}"
 
 # These variables are used to determine the version of Hermes this this image is base
 # upon. To propagate the version, a more descriptive ENV variable is used too.
-ARG HERMES_VERSION='v6.1.0'
-ENV DEV_CONTAINER_BASE_HERMES_VERSION=${HERMES_VERSION}
+ARG HERMES_VERSION='v7.0.0'
+ENV DEV_CONTAINER_BASE_HERMES_VERSION="${HERMES_VERSION}"
 
-# We configure `tzdata` here so that we do not get prompted later when
-# installing packages (e.g. on an interactive shell).
-ENV TZ=Etc/UTC
-
+# TODO
 # hadolint ignore=DL3005,DL3008
 RUN <<EOM
 #! /usr/bin/env -S bash -eE -u -o pipefail -O inherit_errexit
 
-  # We ensure we use the most recent versions of packages from the base image. Here,
-  # `dist-upgrade` is okay as well, because we do not have prior commands installing
-  # software that could potentially be damaged.
-  apt-get --yes update
-  apt-get --yes dist-upgrade
-  apt-get --yes install --no-install-recommends \
-    apt-utils ca-certificates curl dialog doas file locales tzdata
-  # We also perform a proper cleanup
-  apt-get --yes autoremove
-  apt-get --yes clean
-  rm -rf /var/lib/apt/lists/* /tmp/*
+  source /etc/os-release
 
-  # This stage sets up the previously installed package `doas`, a sudo replacement.
-  # We configure it so that the user `ubuntu` can execute root commands password-less.
-  echo "permit nopass ${USER}" >/etc/doas.conf
-  chown root:root /etc/doas.conf
-  chmod 0400 /etc/doas.conf
-  doas -C /etc/doas.conf
-  ln -s "$(command -v doas)" /usr/local/bin/sudo
+  case "${ID}" in
+    ( 'debian' | 'ubuntu' )
+      # These environment variables are used by APT and dpkg. Their # values make APT and
+      # dpkg behave as non-interactive.
+      export DEBIAN_FRONTEND=noninteractive
+      export DEBCONF_NONINTERACTIVE_SEEN=true
+
+      # We configure `tzdata` here so that we do not get prompted later when
+      # installing packages (e.g. on an interactive shell).
+      export TZ=Etc/UTC
+
+      # We ensure we use the most recent versions of packages from the base image. Here,
+      # `dist-upgrade` is okay as well, because we do not have prior commands installing
+      # software that could potentially be damaged.
+      apt-get --yes update
+      apt-get --yes dist-upgrade
+      apt-get --yes install --no-install-recommends \
+        apt-utils ca-certificates curl dialog doas file locales tzdata
+
+      # We also perform a proper cleanup
+      apt-get --yes autoremove
+      apt-get --yes clean
+      rm -rf /var/lib/apt/lists/* /tmp/*
+
+      # This stage sets up the previously installed package `doas`, a sudo replacement.
+      # We configure it so that the user `ubuntu` can execute root commands password-less.
+      echo "permit nopass ${BASE_IMAGE_USER}" >/etc/doas.conf
+      chown root:root /etc/doas.conf
+      chmod 0400 /etc/doas.conf
+      doas -C /etc/doas.conf
+      ln -s "$(command -v doas)" /usr/local/bin/sudo
+      ;;
+
+    ( * )
+      echo "TODO"
+      ;;
+  esac
+EOM
+
+ARG DEFAULT_LOCALE='en_US.UTF-8'
+ENV DEV_CONTAINER_BASE_DEFAULT_LOCALE="${DEFAULT_LOCALE}"
+
+# TODO
+RUN <<EOM
+#! /usr/bin/env -S bash -eE -u -o pipefail -O inherit_errexit
 
   # We prepare hermes (https://github.com/georglauterbach/hermes) here to easily
   # set up default tools and configurations.
   curl --silent --show-error --fail --location --output /usr/local/bin/hermes \
     "https://github.com/georglauterbach/hermes/releases/download/${HERMES_VERSION}/hermes-${HERMES_VERSION}-$(uname -m)-unknown-linux-musl"
-  chmod +x /usr/local/bin/hermes
+    chmod +x /usr/local/bin/hermes
 
   # We also update the locales. We want en_US.UTF-8 to be the standard locale.
   curl --silent --show-error --fail --location --output /usr/local/bin/update_locales.sh \
-    "https://raw.githubusercontent.com/georglauterbach/hermes/refs/tags/${HERMES_VERSION}/examples/scripts/setup_locales.sh"
+    "https://raw.githubusercontent.com/georglauterbach/hermes/refs/tags/${HERMES_VERSION}/data/scripts/setup_locales.sh"
   chmod +x /usr/local/bin/update_locales.sh
-  update_locales.sh 'en_US.UTF-8'
+  update_locales.sh "${DEV_CONTAINER_BASE_DEFAULT_LOCALE}"
 EOM
 
-# We switch to the user `${USER}` and set `${HOME}` as the new working directory.
-USER "${USER}"
-WORKDIR "${HOME}"
+# We switch to the user `${BASE_IMAGE_USER}` and set
+# `${BASE_IMAGE_HOME}` as the new working directory.
+USER "${BASE_IMAGE_USER}"
+WORKDIR "${BASE_IMAGE_HOME}"
 
 RUN <<EOM
 #! /usr/bin/env -S bash -eE -u -o pipefail -O inherit_errexit
 
-  hermes --verbose --non-interactive
-  doas apt-get --yes clean
-  doas rm -rf /var/lib/apt/lists/* /tmp/*
+  hermes --verbose --non-interactive run --install-packages
+
+  source /etc/os-release
+
+  case "${ID}" in
+    ( 'debian' | 'ubuntu' )
+      doas apt-get --yes clean
+      doas rm -rf /var/lib/apt/lists/* /tmp/*
+      ;;
+
+    ( * )
+      echo "TODO"
+      ;;
+  esac
 
   # The following directories are likely mount points, and need correct ownership.
   mkdir -p '.vscode-server/extensions' '.cache'
