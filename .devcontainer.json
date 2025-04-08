@@ -1,19 +1,20 @@
 {
   "name": "Dev Container Base Test",
   "build": {
-    "dockerfile": "Dockerfile"
+    "dockerfile": "Dockerfile",
+    "options": [
+      "--progress=plain"
+    ]
   },
+  "updateRemoteUserUID": true,
+  // "features": {
+  //   "ghcr.io/georglauterbach/dev-container-features/cache-vscode-extensions:0.3.5": {}
+  // },
   "containerEnv": {
     "HERMES_LOAD_EXTRA_PROGRAMS": "true",
     "HERMES_LOAD_ALIASES": "true"
   },
   "mounts": [
-    {
-      // Persist the VS Code Server cache (e.g. for extensions)
-      "source": "dev_container_base-cache-vscode_server",
-      "target": "/home/ubuntu/.vscode-server",
-      "type": "volume"
-    },
     {
       // Persist the `${HOME}/.cache` directory
       "source": "dev_container_base-cache-home_cache",
