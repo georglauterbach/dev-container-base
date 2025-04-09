@@ -1,38 +1,7 @@
 {
   "name": "Dev Container Base Test",
   "build": {
-    "dockerfile": "Dockerfile",
-    "options": [
-      "--progress=plain"
-    ]
+    "dockerfile": "Dockerfile"
   },
-  "updateRemoteUserUID": true,
-  // "features": {
-  //   "ghcr.io/georglauterbach/dev-container-features/cache-vscode-extensions:0.3.5": {}
-  // },
-  "containerEnv": {
-    "HERMES_LOAD_EXTRA_PROGRAMS": "true",
-    "HERMES_LOAD_ALIASES": "true"
-  },
-  "mounts": [
-    {
-      // Persist the `${HOME}/.cache` directory
-      "source": "dev_container_base-cache-home_cache",
-      "target": "/home/ubuntu/.cache",
-      "type": "volume"
-    }
-  ],
-  "postCreateCommand": "sudo curl -sSfL -o /usr/local/bin/hadolint \"https://github.com/hadolint/hadolint/releases/download/v2.12.0/hadolint-Linux-$(uname -m)\" && sudo chmod +x /usr/local/bin/hadolint",
-  "customizations": {
-    "vscode": {
-      "extensions": [
-        "asciidoctor.asciidoctor-vscode",
-        "exiasr.hadolint",
-        "ms-azuretools.vscode-docker"
-      ],
-      "settings": {
-        "asciidoc.antora.showEnableAntoraPrompt": false
-      }
-    }
-  }
+  "postCreateCommand": "sudo curl -sSfL -o /usr/local/bin/hadolint \"https://github.com/hadolint/hadolint/releases/download/v2.12.0/hadolint-Linux-$(uname -m)\" && sudo chmod +x /usr/local/bin/hadolint"
 }

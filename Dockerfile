@@ -5,22 +5,23 @@ ARG BASE_IMAGE_TAG=24.04
 
 FROM ${BASE_IMAGE_REGISTRY}/${BASE_IMAGE_NAME}:${BASE_IMAGE_TAG}
 
-# TODO
-ARG BASE_IMAGE_USER='ubuntu'
-ARG BASE_IMAGE_HOME="/home/${BASE_IMAGE_USER}"
+# The base image's user is required to make
+# hermes run successfully later. The same goes
+# for this user's home directory.
+ARG BASE_IMAGE_USER=ubuntu
+ARG BASE_IMAGE_HOME=/home/${BASE_IMAGE_USER}
 
 # These variables are used to determine the version of Hermes this this image is base
 # upon. To propagate the version, a more descriptive ENV variable is used too.
-ARG HERMES_VERSION='v7.0.0'
-ENV DEV_CONTAINER_BASE_HERMES_VERSION="${HERMES_VERSION}"
+ARG HERMES_VERSION=v7.1.0
+ENV DEV_CONTAINER_BASE_HERMES_VERSION=${HERMES_VERSION}
 
-# TODO
+# This layer sets up core packages and acquires hermes.
 # hadolint ignore=DL3005,DL3008
 RUN <<EOM
 #! /usr/bin/env -S bash -eE -u -o pipefail -O inherit_errexit
 
   source /etc/os-release
-
   case "${ID}" in
     ( 'debian' | 'ubuntu' )
       # These environment variables are used by APT and dpkg. Their # values make APT and
@@ -55,35 +56,22 @@ RUN <<EOM
       ;;
 
     ( * )
-      echo "TODO"
+      echo "ERROR Currently, only Debian-like distributions are supported"
+      exit 1
       ;;
   esac
-EOM
-
-ARG DEFAULT_LOCALE='en_US.UTF-8'
-ENV DEV_CONTAINER_BASE_DEFAULT_LOCALE="${DEFAULT_LOCALE}"
-
-# TODO
-RUN <<EOM
-#! /usr/bin/env -S bash -eE -u -o pipefail -O inherit_errexit
 
   # We prepare hermes (https://github.com/georglauterbach/hermes) here to easily
   # set up default tools and configurations.
   curl --silent --show-error --fail --location --output /usr/local/bin/hermes \
     "https://github.com/georglauterbach/hermes/releases/download/${HERMES_VERSION}/hermes-${HERMES_VERSION}-$(uname -m)-unknown-linux-musl"
-    chmod +x /usr/local/bin/hermes
-
-  # We also update the locales. We want en_US.UTF-8 to be the standard locale.
-  curl --silent --show-error --fail --location --output /usr/local/bin/update_locales.sh \
-    "https://raw.githubusercontent.com/georglauterbach/hermes/refs/tags/${HERMES_VERSION}/data/scripts/setup_locales.sh"
-  chmod +x /usr/local/bin/update_locales.sh
-  update_locales.sh "${DEV_CONTAINER_BASE_DEFAULT_LOCALE}"
+  chmod +x /usr/local/bin/hermes
 EOM
 
 # We switch to the user `${BASE_IMAGE_USER}` and set
 # `${BASE_IMAGE_HOME}` as the new working directory.
-USER "${BASE_IMAGE_USER}"
-WORKDIR "${BASE_IMAGE_HOME}"
+USER ${BASE_IMAGE_USER}
+WORKDIR ${BASE_IMAGE_HOME}
 
 RUN <<EOM
 #! /usr/bin/env -S bash -eE -u -o pipefail -O inherit_errexit
@@ -91,7 +79,6 @@ RUN <<EOM
   hermes --verbose --non-interactive run --install-packages
 
   source /etc/os-release
-
   case "${ID}" in
     ( 'debian' | 'ubuntu' )
       doas apt-get --yes clean
@@ -99,7 +86,8 @@ RUN <<EOM
       ;;
 
     ( * )
-      echo "TODO"
+      echo "ERROR Currently, only Debian-like distributions are supported"
+      exit 1
       ;;
   esac
 
