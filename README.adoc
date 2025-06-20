@@ -4,6 +4,10 @@
 :link-dev_containers: https://containers.dev/
 :link-hermes: https://github.com/georglauterbach/hermes
 
+== Archived
+
+Please use https://github.com/georglauterbach/dev-container-features[`georglauterbach/dev-container-features`] instead of this base image.
+
 == About
 
 When working with link:{link-dev_containers}[Development Containers], you most likely build on top of existing images to utilize their existing tools and configuration. This project provides an image packed with as many as necessary and as few as possible configurations and applications to make development a breeze. You can use this image directly, or build on top of it, when configuring your Development Container.
